@@ -1,0 +1,1076 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Robson Lanches - Administração</title><style>
+:root{
+  --red:#e10600;--red2:#ff3b30;--gold:#ffd21a;--green:#20d56b;
+  --bg:#070707;--panel:#111;--panel2:#171717;--line:#2b2b2b;--muted:#a8a8a8;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+ margin:0;background:
+ radial-gradient(circle at 10% -10%,#5a0805 0,transparent 30%),
+ radial-gradient(circle at 100% 0,#241000 0,transparent 24%),var(--bg);
+ color:#fff;font-family:Inter,Arial,sans-serif;min-height:100vh
+}
+button,input,select,textarea{font:inherit}
+.wrap{width:min(1180px,94%);margin:auto;padding:24px 0 60px}
+.head{
+ position:sticky;top:0;z-index:20;margin:-24px calc((100% - min(1180px,94%))/2) 20px;
+ padding:18px max(3%,calc((100vw - min(1180px,94%))/2));
+ background:#090909eF;border-bottom:1px solid #292929;backdrop-filter:blur(14px);
+ display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap
+}
+.brand{font-weight:1000;font-size:30px;letter-spacing:-1px;color:#fff}
+.brand b{color:var(--red)}
+.headSub{color:#888;font-size:12px;margin-top:3px}
+.head a{color:#ffd21a;font-weight:900;text-decoration:none;background:#191919;border:1px solid #333;padding:10px 14px;border-radius:12px}
+.box{
+ background:linear-gradient(145deg,#151515,#0e0e0e);border:1px solid #292929;border-radius:22px;
+ padding:20px;margin:16px 0;box-shadow:0 14px 40px #0009
+}
+.box h2{margin:0 0 14px;font-size:20px}.box p{margin-top:-5px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.field label{display:block;font-size:11px;color:#aaa;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.field input,.field select,.field textarea{
+ width:100%;background:#090909;color:#fff;border:1px solid #3a3a3a;border-radius:12px;
+ padding:12px;outline:none;transition:.2s
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#e10600;box-shadow:0 0 0 3px #e1060020}
+.field textarea{min-height:86px;resize:vertical}
+.btn{
+ border:0;border-radius:12px;padding:11px 15px;background:linear-gradient(135deg,var(--red),#b90000);
+ color:#fff;font-weight:900;cursor:pointer;transition:.18s;box-shadow:0 5px 16px #0006
+}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.btn.gray{background:#292929}.btn.green{background:linear-gradient(135deg,#159b4b,#0d6530)}
+.btn.gold{background:linear-gradient(135deg,#ffd21a,#e6a900);color:#111}
+.status{padding:7px 10px;border-radius:999px;font-weight:900;font-size:11px;display:inline-block}
+.on{background:#0f4f2c;color:#7dffad}.off{background:#54120f;color:#ff9d96}
+.item{
+ border:1px solid #292929;border-radius:17px;padding:14px;margin:10px 0;background:#101010;
+ transition:.18s
+}
+.item:hover{border-color:#444;transform:translateY(-1px)}
+.itemTop{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.itemName{font-size:16px;font-weight:1000}.itemPrice{color:#ffd21a;font-weight:1000}
+.itemMeta{color:#999;font-size:12px;margin-top:4px}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+.preview{width:110px;height:78px;object-fit:cover;border-radius:12px;margin-top:9px;border:1px solid #333}
+.edit{margin-top:12px;padding:13px;border-top:1px solid #333;display:none;background:#0b0b0b;border-radius:12px}
+.edit.open{display:block}
+.smallGrid{display:grid;grid-template-columns:1.5fr .7fr 1fr;gap:8px}
+.bairroRow{
+ display:grid;grid-template-columns:1.5fr .7fr .7fr auto;gap:8px;align-items:end;
+ margin:9px 0;padding:10px;border:1px solid #242424;border-radius:13px;background:#0d0d0d
+}
+.bairroRow input{min-width:0}
+.sectionTitle{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.hint{color:#888;font-size:12px}
+.empty{padding:25px;text-align:center;color:#777;border:1px dashed #333;border-radius:14px}
+@media(max-width:700px){
+ .wrap{width:94%;padding-top:12px}.head{position:relative;margin:0 -3.2% 14px;padding:15px 3.2%}
+ .brand{font-size:24px}.grid,.smallGrid{grid-template-columns:1fr}
+ .bairroRow{grid-template-columns:1fr 1fr}.bairroRow .btn{grid-column:1/-1}
+ .itemTop{display:block}.actions .btn{flex:1 1 auto}
+ .box{padding:15px;border-radius:18px}
+}
+
+.confirmOverlay{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:center;justify-content:center;z-index:99999;padding:20px;backdrop-filter:blur(5px)}
+.confirmBox{width:min(420px,100%);background:#171717;border:1px solid #333;border-radius:18px;padding:25px;box-shadow:0 20px 60px rgba(0,0,0,.6);text-align:center}
+.confirmBox h3{margin:0 0 10px;color:#fff;font-size:21px}.confirmBox p{margin:0 0 22px;color:#bbb;line-height:1.45}.confirmActions{display:flex;gap:10px}.confirmActions button{flex:1;border:0;border-radius:11px;padding:13px;font-weight:800;cursor:pointer;font-size:15px}.confirmNo{background:#292929;color:#fff}.confirmYes{background:#e53935;color:#fff}
+</style></head><body>
+<div class="confirmOverlay" id="confirmOverlay" onclick="if(event.target===this)closeConfirm()">
+  <div class="confirmBox">
+    <h3>Confirmar exclusão</h3>
+    <p id="confirmMessage">Deseja excluir?</p>
+    <div class="confirmActions">
+      <button class="confirmNo" onclick="closeConfirm()">NÃO</button>
+      <button class="confirmYes" id="confirmYes">SIM</button>
+    </div>
+  </div>
+</div>
+<main class="wrap"><div class="head"><div><div class="brand">ROBSON <b>LANCHES</b></div><div class="headSub">Painel de Administração • controle da loja</div></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+<button class="btn green" onclick="openClientSite()">↗ Abrir site</button>
+</div></div>
+<div class="box" style="padding:13px 15px">
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <span class="status on">● Firebase conectado</span>
+    <span class="hint">As alterações são sincronizadas com o site do cliente.</span>
+    <span id="productCount" class="hint"></span>
+  </div>
+</div>
+<div class="box"><div class="sectionTitle"><h2>⚙️ Configurações</h2><span class="hint">Alterações automáticas</span></div>
+<div class="grid">
+<div class="field"><label>WhatsApp para receber pedidos</label><input id="wa" oninput="autoSaveConfig()"></div>
+<div class="field"><label>Motoboy</label><select id="moto" onchange="autoSaveConfig()"><option value="true">🟢 Disponível</option><option value="false">🔴 Indisponível</option></select></div>
+</div>
+
+</div>
+<div class="box"><div class="sectionTitle"><div><h2>📍 Valores das taxas de entrega</h2><span class="hint">Gerenciar taxas por bairro</span></div><button class="btn gold" onclick="addNeighborhood()">+ Adicionar nova taxa</button></div><p style="color:#aaa;font-size:13px">Toque para abrir todas as taxas. Você pode adicionar bairros, editar valores e ativar ou desativar uma taxa.</p>
+<button class="btn gold" onclick="toggleRates()" id="ratesToggle">▾ Ver valores das taxas</button>
+<div id="ratesPanel" style="display:none;margin-top:14px">
+  <div id="neighborhoodList"></div>
+  <div style="margin-top:10px;color:#20d56b;font-size:12px;font-weight:800">✓ Cada alteração é salva automaticamente no Firebase</div>
+</div></div>
+<div class="box"><div class="sectionTitle"><h2>➕ Novo produto</h2><span class="hint">Cadastre rapidamente</span></div><div class="grid"><div class="field"><label>Nome</label><input id="name"></div><div class="field"><label>Preço</label><input id="price" type="number" step="0.01"></div><div class="field"><label>Categoria</label><select id="cat"></select><div id="categoryManager" class="category-manager"></div></div><div class="field"><label>Disponível</label><select id="avail"><option value="true">Sim</option><option value="false">Não</option></select></div></div><div class="field" style="margin-top:12px"><label>Descrição</label><textarea id="desc"></textarea></div><div style="margin-top:12px"><label>Foto</label><input id="photo" type="file" accept="image/*"></div><button class="btn green" onclick="addProduct()" style="margin-top:12px">+ ADICIONAR NOVO PRODUTO</button></div>
+<div class="box"><div class="sectionTitle"><h2>🍔 Produtos</h2><span id="productCount2" class="hint"></span></div><div id="list"></div></div></main><script>const P=[
+['X-BURGER','Hambúrgueres','Hambúrguer, queijo, tomate, alface, mussarela, maionese e ketchup',13],['X-SALADA','Hambúrgueres','Hambúrguer, tomate, alface, mussarela, maionese e ketchup',13],['BAURU','Hambúrgueres','Presunto, mussarela, tomate, orégano e ketchup',13],['MISTO QUENTE','Hambúrgueres','Presunto, mussarela, batata palha, maionese e ketchup',13],['QUEIJO QUENTE','Hambúrgueres','Mussarela, batata palha e maionese',17],['X MAIONESE','Hambúrgueres','Hambúrguer, mussarela, batata palha e maionese',13],
+['HOT DOG COMPLETO','Hot Dog','1 salsicha, batata palha, purê de batata, vinagrete, maionese, ketchup e mostarda',15],['HOT DOG ESPECIAL','Hot Dog','2 salsichas, batata palha, purê de batata, vinagrete, maionese, ketchup, mostarda e catupiry',18],['HOT DOG ESPECIAL C/ BACON','Hot Dog','2 salsichas, bacon, batata palha, purê de batata, vinagrete, maionese, ketchup e mostarda',18],['HOT DOG ESPECIAL C/ MUSSARELA','Hot Dog','2 salsichas, batata palha, purê de batata, vinagrete, maionese, ketchup, mostarda e mussarela',18],['HOT DOG ESPECIAL C/ CALABRESA','Hot Dog','Calabresa, 2 salsichas, batata palha, purê de batata, vinagrete, maionese, ketchup e mostarda',18],['BIG DOG','Hot Dog','Bacon, calabresa, 2 salsichas, batata palha, purê de batata, vinagrete, maionese, ketchup e mostarda',23],['MONSTER DOG','Hot Dog','3 salsichas, calabresa, bacon, cheddar, catupiry, mussarela, purê de batata, batata palha, queijo e vinagrete',28],
+['X-EGG','Lanches Especiais','Hambúrguer, ovo, tomate, mussarela, alface, maionese e ketchup',19],['X-EGG ESPECIAL','Lanches Especiais','2 hambúrgueres, ovo, tomate, mussarela, alface, maionese e ketchup',23],['X-EGG C/ CALABRESA','Lanches Especiais','Hambúrguer, calabresa, ovo, tomate, mussarela, alface, maionese e ketchup',23],['X-CALABRESA','Lanches Especiais','Hambúrguer, calabresa, tomate, mussarela, alface, maionese e ketchup',19],['X-CALABRESA ESPECIAL','Lanches Especiais','2 hambúrgueres, calabresa, tomate, mussarela, alface, maionese e ketchup',23],['AMERICANO','Lanches Especiais','Ovo, presunto, tomate, mussarela, alface, orégano, maionese e ketchup',18],['X-CATUPIRY','Lanches Especiais','Hambúrguer, catupiry, batata palha, mussarela e maionese',18],['X-CHEDDAR','Lanches Especiais','Hambúrguer, cheddar, batata palha, mussarela e maionese',18],['FRANCÃO','Lanches Especiais','Frango, tomate, mussarela, maionese e ketchup',20],['FRANCÃO ESPECIAL','Lanches Especiais','Frango, tomate, pão, alface, catupiry, batata palha, maionese e ketchup',35],['LANCHE DE PERNIL','Lanches Especiais','Pão, pernil, desfiado e vinagrete',39],['X-SALADA ESPECIAL','Lanches Especiais','2 hambúrgueres, alface, tomate, mussarela, maionese e ketchup',18],['X-SIG SALADA','Lanches Especiais','3 hambúrgueres, alface, tomate, mussarela, maionese, catupiry e ketchup',55],['X-BACON','Lanches Especiais','Hambúrguer, bacon, alface, tomate, mussarela, maionese e ketchup',18],['X-BACON ESPECIAL','Lanches Especiais','2 hambúrgueres, bacon, alface, tomate, mussarela, maionese e ketchup',23],['X-BACON C/ OVO','Lanches Especiais','Hambúrguer, ovo, bacon, alface, tomate, mussarela, maionese e ketchup',23],['X-TUDO','Lanches Especiais','Hambúrguer, ovo, bacon, presunto, catupiry, cheddar, batata palha, calabresa, alface, tomate, mussarela, maionese e ketchup',30]
+];
+let products=JSON.parse(localStorage.getItem('robson_lanches_products')||'null');if(!Array.isArray(products)||products.length!==30){products=P.map((x,i)=>({id:i+1,name:x[0],cat:x[1],desc:x[2],price:x[3],available:true,photo:''}));save()}function save(){localStorage.setItem('robson_lanches_products',JSON.stringify(products))}function money(v){return Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}function saveConfig(){localStorage.setItem('robson_lanches_whatsapp',document.getElementById('wa').value.replace(/\D/g,''));localStorage.setItem('robson_lanches_moto',document.getElementById('moto').value);localStorage.setItem('robson_lanches_delivery_fee',String(Number(document.getElementById('deliveryFee').value)||0));customNotify('Configurações salvas')}function render(){document.getElementById('productCount').textContent=`${products.length} produto${products.length===1?'':'s'}`;document.getElementById('productCount2').textContent=`${products.length} cadastrado${products.length===1?'':'s'}`;document.getElementById('list').innerHTML=products.length?products.map(p=>`<div class="item"><div class="itemTop"><div><div class="itemName">${p.name}</div><div class="itemMeta">${p.cat} • <span class="status ${p.available?'on':'off'}">${p.available?'Disponível':'Indisponível'}</span></div></div><div class="itemPrice">${money(p.price)}</div></div>${p.photo?`<br><img class="preview" src="${p.photo}">`:''}<div class="actions"><button class="btn ${p.available?'gray':'green'}" onclick="toggle(${p.id})">${p.available?'Desativar':'Ativar'}</button><button class="btn gray" onclick="photo(${p.id})">Trocar foto</button><button class="btn gray" onclick="openEdit(${p.id})">Editar</button><button class="btn" onclick="del(${p.id})">Excluir</button></div><div class="edit" id="edit-${p.id}"><div class="smallGrid"><div class="field"><label>Nome</label><input id="en-${p.id}" value="${p.name.replace(/"/g,'&quot;')}"></div><div class="field"><label>Preço</label><input id="ep-${p.id}" type="number" step="0.01" value="${p.price}"></div><div class="field"><label>Categoria</label><select id="ec-${p.id}"><option ${p.cat==='Hambúrgueres'?'selected':''}>Hambúrgueres</option><option ${p.cat==='Hot Dog'?'selected':''}>Hot Dog</option><option ${p.cat==='Lanches Especiais'?'selected':''}>Lanches Especiais</option></select></div></div><div class="field" style="margin-top:8px"><label>Descrição</label><textarea id="ed-${p.id}">${p.desc}</textarea></div><button class="btn green" onclick="saveEdit(${p.id})">Salvar alteração</button></div></div>`) .join(''):'<div class="empty">Nenhum produto cadastrado.</div>'}function toggle(id){let p=products.find(x=>x.id===id);p.available=!p.available;save();render()}function escapeHtml(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;',"\"":'&quot;'}[c]))}
+let confirmAction=null;
+function showConfirm(message,action){confirmAction=action;document.getElementById('confirmMessage').innerHTML=message;document.getElementById('confirmOverlay').style.display='flex';}
+function closeConfirm(){confirmAction=null;document.getElementById('confirmOverlay').style.display='none';}
+document.addEventListener('DOMContentLoaded',()=>{document.getElementById('confirmYes').onclick=()=>{const a=confirmAction;closeConfirm();if(a)a();};});
+function del(id){const p=products.find(x=>x.id===id); if(!p)return; showConfirm('Deseja excluir o produto <strong>'+escapeHtml(p.name)+'</strong>?',()=>{products=products.filter(x=>x.id!==id);save();render()})}function photo(id){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{products.find(x=>x.id===id).photo=r.result;save();render()};r.readAsDataURL(f)};i.click()}function openEdit(id){document.getElementById('edit-'+id).classList.toggle('open')}function saveEdit(id){let p=products.find(x=>x.id===id);p.name=document.getElementById('en-'+id).value.trim().toUpperCase();p.price=Number(document.getElementById('ep-'+id).value)||0;p.cat=document.getElementById('ec-'+id).value;p.desc=document.getElementById('ed-'+id).value.trim();save();render()}function getNeighborhoods(){try{const n=JSON.parse(localStorage.getItem('robson_lanches_neighborhoods')||'[]');return Array.isArray(n)?n:[]}catch(e){return []}}
+let neighborhoods=getNeighborhoods();
+if(!neighborhoods.length){neighborhoods=[{name:'Centro',fee:5,available:true},{name:'Bairro 2',fee:7,available:true},{name:'Bairro 3',fee:10,available:true}];localStorage.setItem('robson_lanches_neighborhoods',JSON.stringify(neighborhoods));}
+function renderNeighborhoods(){
+ const el=document.getElementById('neighborhoodList');
+ el.innerHTML=neighborhoods.map((n,i)=>`
+ <div class="bairroRow">
+  <div class="field"><label>Bairro</label><input id="bn-${i}" value="${String(n.name).replace(/"/g,'&quot;')}" oninput="queueNeighborhoodSave()"></div>
+  <div class="field"><label>Valor da taxa (R$)</label><input id="bf-${i}" type="number" min="0" step="0.01" value="${Number(n.fee)||0}" oninput="queueNeighborhoodSave()"></div>
+  <div class="field"><label>Status</label><select id="ba-${i}" onchange="queueNeighborhoodSave()"><option value="true" ${n.available!==false?'selected':''}>Disponível</option><option value="false" ${n.available===false?'selected':''}>Indisponível</option></select></div>
+  <button class="btn" onclick="removeNeighborhood(${i})">Excluir</button>
+ </div>`).join('');
+}
+window._neighborhoodTimer=null;
+window.queueNeighborhoodSave=function(){
+ clearTimeout(window._neighborhoodTimer);
+ window._neighborhoodTimer=setTimeout(()=>window.autoSaveNeighborhoods(),500);
+};
+window.autoSaveNeighborhoods=async function(){
+ neighborhoods=neighborhoods.map((n,i)=>({
+  name:(document.getElementById('bn-'+i)?.value||'').trim(),
+  fee:Number(document.getElementById('bf-'+i)?.value)||0,
+  available:document.getElementById('ba-'+i)?.value==='true'
+ })).filter(n=>n.name);
+ setLocal('robson_lanches_neighborhoods',neighborhoods);
+ try{await setDoc(bairroRef,{items:neighborhoods},{merge:true});}
+ catch(e){console.error('Firebase:',e);}
+};
+function addNeighborhood(){
+  const existing = document.getElementById('newRateModal');
+  if(existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'newRateModal';
+  modal.className = 'custom-modal';
+  modal.innerHTML = `
+    <div class="custom-modal-box">
+      <div class="custom-modal-title">Adicionar nova taxa</div>
+      <div class="custom-modal-text">Digite o nome do bairro e o valor da taxa de entrega.</div>
+      <input id="newRateName" class="modal-input" type="text" placeholder="Nome do bairro" autocomplete="off">
+      <input id="newRateFee" class="modal-input" type="number" min="0" step="0.01" placeholder="Valor da taxa (R$)" inputmode="decimal">
+      <div class="custom-modal-actions">
+        <button class="modal-btn secondary" onclick="document.getElementById('newRateModal').remove()">NÃO</button>
+        <button class="modal-btn primary" onclick="confirmAddNeighborhood()">ADICIONAR</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  setTimeout(() => document.getElementById('newRateName')?.focus(), 50);
+}
+function removeNeighborhood(i){
+ const n=neighborhoods[i];
+ showConfirm('Deseja excluir a taxa de entrega de <strong>'+escapeHtml(n?.name||'este bairro')+'</strong>?',()=>{
+  neighborhoods.splice(i,1);
+  renderNeighborhoods();
+  autoSaveNeighborhoods();
+ });
+}
+function saveNeighborhoods(){autoSaveNeighborhoods()}
+function addProduct(){const name=document.getElementById('name').value.trim().toUpperCase(),price=Number(document.getElementById('price').value),cat=document.getElementById('cat').value,desc=document.getElementById('desc').value.trim(),available=document.getElementById('avail').value==='true',f=document.getElementById('photo').files[0];if(!name||!price)return customNotify('Informe nome e preço');const done=photo=>{products.push({id:Date.now(),name,cat,desc,price,available,photo:photo||''});save();document.getElementById('name').value='';document.getElementById('price').value='';document.getElementById('desc').value='';document.getElementById('photo').value='';render()};if(f){const r=new FileReader();r.onload=()=>done(r.result);r.readAsDataURL(f)}else done('')}
+function getClientSiteUrl(){
+ return 'https://share.google/ruR0EbnAhBe3JuFeR';
+}
+function saveClientSite(){
+ let u=(document.getElementById('clientSiteUrl').value||'').trim();
+ if(!u)return customNotify('Cole o link do site do cliente.');
+ if(!/^https?:\/\//i.test(u) && !u.startsWith('./') && !u.startsWith('../'))u='https://'+u;
+ localStorage.setItem('robson_lanches_client_site',u);
+ document.getElementById('clientSiteUrl').value=u;
+}
+function openClientSite(){window.open(getClientSiteUrl(),'_blank','noopener');}
+document.getElementById('wa').value=localStorage.getItem('robson_lanches_whatsapp')||'5515996451252';document.getElementById('moto').value=localStorage.getItem('robson_lanches_moto')||'true';renderNeighborhoods();render();</script><script type="module">
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyDhBQ-QVbOWxfTvt1fTgi4eZG5GMSLdywA",authDomain:"robson-2a391.firebaseapp.com",projectId:"robson-2a391",storageBucket:"robson-2a391.firebasestorage.app",messagingSenderId:"733759215105",appId:"1:733759215105:web:fa04532f433916aeb35200",measurementId:"G-ZLYFBWEVPQ"};
+const app=getApps().length ? getApp() : initializeApp(firebaseConfig),db=getFirestore(app);window.firebaseDB=db;
+const prodRef=collection(db,'produtos'),cfgRef=doc(db,'config','loja'),bairroRef=doc(db,'config','bairros');
+function setLocal(k,v){localStorage.setItem(k,typeof v==='string'?v:JSON.stringify(v));}
+function compress(file,maxW=900,quality=.72){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const scale=Math.min(1,maxW/im.width);const c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*scale));c.height=Math.max(1,Math.round(im.height*scale));c.getContext('2d').drawImage(im,0,0,c.width,c.height);resolve(c.toDataURL('image/jpeg',quality));};im.onerror=reject;im.src=r.result};r.onerror=reject;r.readAsDataURL(file)})}
+async function saveProduct(p){await setDoc(doc(db,'produtos',String(p.id)),p,{merge:true});setLocal('robson_lanches_products',products);}
+window.photo=async function(id){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const photo=await compress(f);if(photo.length>900000){customNotify('A foto ficou muito grande. Escolha uma foto menor.');return}const p=products.find(x=>x.id===id);if(!p)return;p.photo=photo;await saveProduct(p);render();}catch(err){customNotify('Não foi possível preparar a foto.')}};i.click()};
+window.toggle=async function(id){const p=products.find(x=>x.id===id);if(!p)return;p.available=!p.available;await saveProduct(p);render()};
+window.del=async function(id){const p=products.find(x=>x.id===id);if(!p)return;customConfirm('EXCLUIR PRODUTO',`Deseja excluir o produto <strong>${escapeHtml(p.name)}</strong>?`,()=>{products=products.filter(x=>x.id!==id);localStorage.setItem('robson_lanches_products',JSON.stringify(products));deleteDoc(doc(db,'produtos',String(id))).catch(()=>{});render();});};
+window.saveEdit=async function(id){const p=products.find(x=>x.id===id);if(!p)return;p.name=document.getElementById('en-'+id).value.trim().toUpperCase();p.price=Number(document.getElementById('ep-'+id).value)||0;p.cat=document.getElementById('ec-'+id).value;p.desc=document.getElementById('ed-'+id).value.trim();await saveProduct(p);render()};
+window.addProduct=async function(){const name=document.getElementById('name').value.trim().toUpperCase(),price=Number(document.getElementById('price').value),cat=document.getElementById('cat').value,desc=document.getElementById('desc').value.trim(),available=document.getElementById('avail').value==='true',f=document.getElementById('photo').files[0];if(!name||!price)return customNotify('Informe nome e preço');let photo='';if(f){photo=await compress(f);if(photo.length>900000)return customNotify('A foto ficou muito grande. Escolha uma foto menor.')}const p={id:Date.now(),name,cat,desc,price,available,photo};products.push(p);await saveProduct(p);document.getElementById('name').value='';document.getElementById('price').value='';document.getElementById('desc').value='';document.getElementById('photo').value='';render()};
+
+window._autoSaveTimer=null;
+window.autoSaveConfig=function(){
+  clearTimeout(window._autoSaveTimer);
+  window._autoSaveTimer=setTimeout(async()=>{
+    const whatsapp=document.getElementById('wa').value.replace(/\D/g,'');
+    const moto=document.getElementById('moto').value==='true';
+    setLocal('robson_lanches_whatsapp',whatsapp);
+    setLocal('robson_lanches_moto',String(moto));
+    try{
+      await setDoc(cfgRef,{whatsapp,moto},{merge:true});
+    }catch(e){console.error('Firebase:',e)}
+  },350);
+};
+window.toggleRates=function(){
+  const p=document.getElementById('ratesPanel'),b=document.getElementById('ratesToggle');
+  const open=p.style.display!=='none';
+  p.style.display=open?'none':'block';
+  b.textContent=open?'▾ Ver valores das taxas':'▴ Ocultar valores das taxas';
+};
+window.autoSaveNeighborhoods=async function(){
+  neighborhoods=neighborhoods.map((n,i)=>({
+    name:document.getElementById('bn-'+i).value.trim(),
+    fee:Number(document.getElementById('bf-'+i).value)||0,
+    available:document.getElementById('ba-'+i).value==='true'
+  })).filter(n=>n.name);
+  setLocal('robson_lanches_neighborhoods',neighborhoods);
+  try{await setDoc(bairroRef,{items:neighborhoods},{merge:true})}
+  catch(e){console.error('Firebase:',e)}
+};
+window.saveConfig=window.autoSaveConfig;
+window.saveNeighborhoods=async function(){neighborhoods=neighborhoods.map((n,i)=>({name:document.getElementById('bn-'+i).value.trim(),fee:Number(document.getElementById('bf-'+i).value)||0,available:document.getElementById('ba-'+i).value==='true'})).filter(n=>n.name);setLocal('robson_lanches_neighborhoods',neighborhoods);await setDoc(bairroRef,{items:neighborhoods},{merge:true});renderNeighborhoods();customNotify('Bairros e taxas salvos no Firebase')};
+onSnapshot(prodRef,s=>{const ps=[];s.forEach(d=>ps.push(d.data()));ps.sort((a,b)=>(a.id||0)-(b.id||0));if(ps.length){products=(window.__robsonPreservePhotos?window.__robsonPreservePhotos(ps):ps);setLocal('robson_lanches_products',products);render()}});
+onSnapshot(cfgRef,s=>{if(!s.exists())return;const c=s.data();if(c.whatsapp!=null){setLocal('robson_lanches_whatsapp',String(c.whatsapp));document.getElementById('wa').value=String(c.whatsapp)}if(typeof c.moto==='boolean'){setLocal('robson_lanches_moto',String(c.moto));document.getElementById('moto').value=String(c.moto)}});
+onSnapshot(bairroRef,s=>{if(s.exists()&&Array.isArray(s.data().items)){neighborhoods=s.data().items;setLocal('robson_lanches_neighborhoods',neighborhoods);renderNeighborhoods()}});
+(async()=>{try{const snap=await getDoc(cfgRef);if(!snap.exists()){await setDoc(cfgRef,{whatsapp:localStorage.getItem('robson_lanches_whatsapp')||'5515996451252',moto:localStorage.getItem('robson_lanches_moto')!=='false'},{merge:true})}const bs=JSON.parse(localStorage.getItem('robson_lanches_neighborhoods')||'[]');const b=await getDoc(bairroRef);if(!b.exists()&&bs.length)await setDoc(bairroRef,{items:bs},{merge:true});}catch(e){console.error('Firebase:',e)}})();
+</script>
+
+<script>
+/* ===== CATEGORIAS PERSONALIZADAS + MODAIS + DESEMPENHO ===== */
+const CATEGORY_KEY='robson_lanches_categories';
+function normName(v){return String(v??'').trim().replace(/\s+/g,' ').toUpperCase();}
+function getCategories(){
+  let c=[]; try{c=JSON.parse(localStorage.getItem(CATEGORY_KEY)||'[]')}catch(e){}
+  if(!Array.isArray(c)) c=[];
+  const defaults=['HAMBÚRGUERES','HOT DOG','LANCHES ESPECIAIS'];
+  const out=[]; [...defaults,...c].forEach(x=>{x=normName(x);if(x&&!out.includes(x))out.push(x)});
+  return out;
+}
+function saveCategories(c){localStorage.setItem(CATEGORY_KEY,JSON.stringify([...new Set(c.map(normName).filter(Boolean))]));}
+let categories=getCategories();
+saveCategories(categories);
+function catInternal(label){
+  const m={'HAMBÚRGUERES':'Hambúrgueres','HOT DOG':'Hot Dog','LANCHES ESPECIAIS':'Lanches Especiais'};
+  return m[label]||label;
+}
+function catDisplay(v){return normName(v);}
+function catOptions(selected){
+  const sel=normName(selected);
+  return categories.map(c=>`<option value="${escapeHtml(c)}" ${normName(c)===sel?'selected':''}>${escapeHtml(c)}</option>`).join('');
+}
+function refreshCategoryControls(){
+  const cat=document.getElementById('cat');
+  if(cat) cat.innerHTML=catOptions(cat.value);
+}
+function categoryModal(title,body,actions){
+  document.getElementById('customCategoryModal')?.remove();
+  const m=document.createElement('div');m.id='customCategoryModal';m.className='custom-modal';
+  m.innerHTML=`<div class="custom-modal-box category-modal-box"><div class="custom-modal-title">${title}</div><div class="custom-modal-text">${body}</div>${actions}</div>`;
+  m.onclick=e=>{if(e.target===m)m.remove()};document.body.appendChild(m);return m;
+}
+function addCategory(){
+  const m=categoryModal('ADICIONAR CATEGORIA','Digite o nome da nova categoria.',`<input id="newCategoryName" class="modal-input" type="text" placeholder="NOME DA CATEGORIA" autocomplete="off"><div class="custom-modal-actions"><button class="modal-btn secondary" onclick="document.getElementById('customCategoryModal').remove()">CANCELAR</button><button class="modal-btn primary" onclick="confirmAddCategory()">ADICIONAR</button></div>`);
+  const i=m.querySelector('#newCategoryName');i.addEventListener('input',()=>i.value=i.value.toUpperCase());setTimeout(()=>i.focus(),30);
+}
+function confirmAddCategory(){
+  const i=document.getElementById('newCategoryName');const name=normName(i?.value);
+  if(!name)return i?.focus();
+  if(categories.some(c=>normName(c)===name))return customNotify('ESSA CATEGORIA JÁ EXISTE.');
+  categories.push(name);saveCategories(categories);refreshCategoryControls();document.getElementById('cat').value=name;document.getElementById('customCategoryModal')?.remove();
+}
+function deleteCategory(){
+  const current=normName(document.getElementById('cat')?.value);if(!current)return;
+  if(!categories.some(c=>normName(c)===current))return;
+  const used=products.some(p=>normName(p.cat)===current);
+  if(used){categoryModal('NÃO É POSSÍVEL EXCLUIR','Esta categoria está sendo usada por um ou mais produtos. Troque a categoria dos produtos antes de excluir.',`<div class="custom-modal-actions"><button class="modal-btn primary" onclick="document.getElementById('customCategoryModal').remove()">OK</button></div>`);return;}
+  const m=categoryModal('EXCLUIR CATEGORIA',`Deseja excluir a categoria <strong>${escapeHtml(current)}</strong>?`,`<div class="custom-modal-actions"><button class="modal-btn secondary" onclick="document.getElementById('customCategoryModal').remove()">NÃO</button><button class="modal-btn primary" onclick="confirmDeleteCategory()">SIM, EXCLUIR</button></div>`);
+}
+function confirmDeleteCategory(){
+  const current=normName(document.getElementById('cat')?.value);categories=categories.filter(c=>normName(c)!==current);saveCategories(categories);refreshCategoryControls();document.getElementById('customCategoryModal')?.remove();
+}
+function normalizeAllNames(){
+  const seen=new Set();products=products.map(p=>({...p,name:normName(p.name),cat:catDisplay(p.cat)})).filter(p=>{const k=normName(p.name);if(!k||seen.has(k))return false;seen.add(k);return true;});
+  neighborhoods=neighborhoods.map(n=>({...n,name:normName(n.name)})).filter((n,i,a)=>n.name&&a.findIndex(x=>x.name===n.name)===i);
+  categories=getCategories();products.forEach(p=>{if(p.cat&&!categories.includes(normName(p.cat)))categories.push(normName(p.cat))});saveCategories(categories);save();setLocal('robson_lanches_neighborhoods',neighborhoods);
+}
+normalizeAllNames();
+const oldRender=render;
+render=function(){refreshCategoryControls();oldRender();};
+const oldAddProduct=window.addProduct;
+window.addProduct=async function(){
+  const name=normName(document.getElementById('name').value), price=Number(document.getElementById('price').value), cat=normName(document.getElementById('cat').value), desc=document.getElementById('desc').value.trim(), available=document.getElementById('avail').value==='true', f=document.getElementById('photo').files[0];
+  if(!name||!price)return customNotify('INFORME NOME E PREÇO');
+  if(products.some(p=>normName(p.name)===name))return customNotify('JÁ EXISTE UM PRODUTO COM ESSE NOME.');
+  document.getElementById('name').value=name;
+  document.getElementById('cat').value=cat;
+  return oldAddProduct();
+};
+const oldSaveEdit=window.saveEdit;
+window.saveEdit=async function(id){
+  const p=products.find(x=>x.id===id);if(!p)return;
+  const name=normName(document.getElementById('en-'+id).value);
+  if(products.some(x=>x.id!==id&&normName(x.name)===name))return customNotify('JÁ EXISTE OUTRO PRODUTO COM ESSE NOME.');
+  document.getElementById('en-'+id).value=name;document.getElementById('ec-'+id).value=normName(document.getElementById('ec-'+id).value);return oldSaveEdit(id);
+};
+const oldRenderNeighborhoods=renderNeighborhoods;
+renderNeighborhoods=function(){
+  neighborhoods=neighborhoods.map(n=>({...n,name:normName(n.name)}));
+  oldRenderNeighborhoods();
+  document.querySelectorAll('[id^="bn-"]').forEach(i=>i.addEventListener('input',()=>{i.value=i.value.toUpperCase()}));
+};
+const oldConfirmAddNeighborhood=window.confirmAddNeighborhood;
+window.confirmAddNeighborhood=function(){
+  const el=document.getElementById('newRateName');if(el)el.value=normName(el.value);const name=normName(el?.value);
+  if(neighborhoods.some(n=>normName(n.name)===name))return customNotify('ESSE BAIRRO JÁ EXISTE.');
+  return oldConfirmAddNeighborhood();
+};
+</script>
+<style>
+.category-actions{display:flex;gap:7px;margin-top:7px}.category-actions button{padding:9px 10px;font-size:11px}.category-modal-box{max-width:430px}.custom-modal{will-change:opacity}.custom-modal-box{backdrop-filter:none}
+</style>
+
+<script>
+/* NOTIFICAÇÕES 100% PERSONALIZADAS — SEM ALERT/CONFIRM DO GOOGLE */
+function customNotify(titleOrMessage, message){
+  const title = message===undefined ? 'AVISO' : String(titleOrMessage);
+  const body = message===undefined ? String(titleOrMessage) : String(message);
+  document.getElementById('customNotifyModal')?.remove();
+  const m=document.createElement('div');m.id='customNotifyModal';m.className='custom-modal';
+  m.innerHTML=`<div class="custom-modal-box"><div class="custom-modal-title">${escapeHtml(title)}</div><div class="custom-modal-text">${body}</div><div class="custom-modal-actions"><button type="button" class="modal-btn primary" onclick="document.getElementById('customNotifyModal').remove()">OK</button></div></div>`;
+  m.onclick=e=>{if(e.target===m)m.remove()};document.body.appendChild(m);
+  return false;
+}
+function customConfirm(title,message,onYes){
+  document.getElementById('customConfirmModal')?.remove();
+  const m=document.createElement('div');m.id='customConfirmModal';m.className='custom-modal';
+  m.innerHTML=`<div class="custom-modal-box"><div class="custom-modal-title">${escapeHtml(title)}</div><div class="custom-modal-text">${message}</div><div class="custom-modal-actions"><button type="button" class="modal-btn secondary" id="customConfirmNo">NÃO</button><button type="button" class="modal-btn primary" id="customConfirmYes">SIM</button></div></div>`;
+  m.onclick=e=>{if(e.target===m)m.remove()};document.body.appendChild(m);
+  m.querySelector('#customConfirmNo').onclick=()=>m.remove();
+  m.querySelector('#customConfirmYes').onclick=()=>{m.remove();if(typeof onYes==='function')onYes()};
+}
+window.alert=customNotify;
+
+/* MAIÚSCULA AUTOMÁTICA EM TODOS OS CAMPOS DE NOME */
+document.addEventListener('input',e=>{
+  const el=e.target;
+  if(!el || !el.tagName || el.tagName!=='INPUT')return;
+  const id=String(el.id||'').toLowerCase();
+  const isName = id==='name' || id.startsWith('en-') || id.startsWith('bn-') || id==='newraterate' || id==='newratename' || id==='newcategoryname';
+  if(isName) el.value=String(el.value).toUpperCase();
+});
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('#name,[id^="en-"],[id^="bn-"],#newRateName,#newCategoryName').forEach(el=>el.value=String(el.value||'').toUpperCase());
+});
+</script>
+<style>
+.custom-modal{position:fixed!important;inset:0!important;z-index:999999!important;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.82);backdrop-filter:blur(6px)}
+.custom-modal-box{width:min(430px,100%);background:#151515;border:1px solid #3a3a3a;border-radius:18px;padding:22px;box-shadow:0 20px 70px rgba(0,0,0,.7);color:#fff}
+.custom-modal-title{font-size:20px;font-weight:900;margin-bottom:8px;text-transform:uppercase}
+.custom-modal-text{font-size:14px;color:#bbb;margin-bottom:18px;line-height:1.45}
+.modal-input{width:100%;box-sizing:border-box;margin:0 0 12px;padding:13px 14px;border-radius:10px;border:1px solid #3b3b3b;background:#0d0d0d;color:#fff;outline:none;font-size:15px;text-transform:uppercase}
+.custom-modal-actions{display:flex;gap:10px;margin-top:6px}.modal-btn{flex:1;border:0;border-radius:10px;padding:12px;font-weight:900;cursor:pointer}.modal-btn.secondary{background:#292929;color:#fff}.modal-btn.primary{background:#e53935;color:#fff}
+</style>
+<script type="module">
+import {initializeApp, getApps, getApp} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import {getStorage,ref,uploadBytes,getDownloadURL,deleteObject} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+const firebaseConfig={apiKey:"AIzaSyDhBQ-QVbOWxfTvt1fTgi4eZG5GMSLdywA",authDomain:"robson-2a391.firebaseapp.com",projectId:"robson-2a391",storageBucket:"robson-2a391.firebasestorage.app",messagingSenderId:"733759215105",appId:"1:733759215105:web:fa04532f433916aeb35200",measurementId:"G-ZLYFBWEVPQ"};
+const app=getApps().length ? getApp() : initializeApp(firebaseConfig),db=getFirestore(app),storage=getStorage(app);
+const produtos=collection(db,"produtos"),loja=doc(db,"config","loja"),bairros=doc(db,"config","bairros");
+window.robsonFirebase={db,storage};
+async function resizeImage(file){return await new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const k=Math.min(1,1200/i.width),c=document.createElement('canvas');c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);c.getContext('2d').drawImage(i,0,0,c.width,c.height);c.toBlob(b=>b?ok(b):no(), 'image/jpeg',.82)};i.onerror=no;i.src=r.result};r.onerror=no;r.readAsDataURL(file)})}
+window.uploadProductPhoto=async(id,file)=>{const b=await resizeImage(file),r=ref(storage,'produtos/'+id+'.jpg');await uploadBytes(r,b,{contentType:'image/jpeg'});return getDownloadURL(r)};
+window.saveProductFirebase=async p=>setDoc(doc(db,'produtos',String(p.id)),p,{merge:true});
+window.deleteProductFirebase=async(id)=>deleteDoc(doc(db,'produtos',String(id)));
+window.saveConfigFirebase=async c=>setDoc(loja,c,{merge:true});
+window.saveBairrosFirebase=async a=>setDoc(bairros,{items:a,updatedAt:Date.now()},{merge:true});
+onSnapshot(produtos,s=>{const a=[];s.forEach(d=>a.push({...d.data(),id:d.data().id??d.id}));a.sort((x,y)=>Number(x.id)-Number(y.id));const kept=window.__robsonPreservePhotos?window.__robsonPreservePhotos(a):a;window.products=kept;try{products=kept}catch(e){}localStorage.setItem('robson_lanches_products',JSON.stringify(kept));if(typeof render==='function')render();},console.error);
+</script>
+<script>
+/* ===== PATCH FINAL: CONFIRMAÇÃO + CATEGORIAS NO FIREBASE ===== */
+(function(){
+  function waitFirebase(fn){
+    if(typeof window.firebaseSaveCategories==='function') return fn();
+    setTimeout(()=>waitFirebase(fn),80);
+  }
+  window.__robsonCategoryList = window.__robsonCategoryList || ['HAMBÚRGUERES','HOT DOG','LANCHES ESPECIAIS'];
+
+  window.renderCategorySelects=function(){
+    const list=window.__robsonCategoryList||[];
+    const fill=function(sel){
+      if(!sel)return;
+      const cur=sel.value;
+      sel.innerHTML=list.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('') + '<option value="__ADD_CATEGORY__">＋ ADICIONAR CATEGORIA</option>';
+      if(list.includes(cur)) sel.value=cur;
+      else if(cur==='__ADD_CATEGORY__') sel.value='__ADD_CATEGORY__';
+      else if(list.length) sel.value=list[0];
+    };
+    const cat=document.getElementById('cat');
+    fill(cat);
+    document.querySelectorAll('[id^="ec-"]').forEach(fill);
+  };
+  document.addEventListener('change',function(e){
+    const sel=e.target;
+    if(!sel || !sel.id || !(sel.id==='cat' || sel.id.startsWith('ec-'))) return;
+    if(sel.value==='__ADD_CATEGORY__'){
+      sel.value=(window.__robsonCategoryList||[])[0]||'';
+      window.addCategory?.();
+    }
+  });
+
+  window.__saveCategoriesNow=async function(){
+    const list=[...new Set((window.__robsonCategoryList||[]).map(x=>String(x).trim().toUpperCase()).filter(Boolean))];
+    window.__robsonCategoryList=list;
+    localStorage.setItem('robson_lanches_categories',JSON.stringify(list));
+    if(window.firebaseSaveCategories) await window.firebaseSaveCategories(list);
+    if(typeof window.renderCategorySelects==='function')window.renderCategorySelects();
+  };
+
+  window.addCategory=async function(){
+    const m=categoryModal('ADICIONAR CATEGORIA','Digite o nome da nova categoria.',`<input id="newCategoryName" class="modal-input" type="text" placeholder="NOME DA CATEGORIA" autocomplete="off"><div class="custom-modal-actions"><button class="modal-btn secondary" onclick="document.getElementById('customCategoryModal').remove()">NÃO</button><button class="modal-btn primary" onclick="confirmAddCategory()">ADICIONAR</button></div>`);
+    const i=m.querySelector('#newCategoryName');i.addEventListener('input',()=>i.value=i.value.toUpperCase());setTimeout(()=>i.focus(),30);
+  };
+  window.confirmAddCategory=async function(){
+    const i=document.getElementById('newCategoryName'), name=String(i?.value||'').trim().replace(/\s+/g,' ').toUpperCase();
+    if(!name)return i?.focus();
+    if((window.__robsonCategoryList||[]).some(c=>c===name))return customNotify('ESSA CATEGORIA JÁ EXISTE.');
+    document.getElementById('customCategoryModal')?.remove();
+    customConfirm('ADICIONAR CATEGORIA',`Deseja adicionar a categoria <strong>${escapeHtml(name)}</strong>?`,async()=>{
+      window.__robsonCategoryList.push(name);
+      try{
+        await window.__saveCategoriesNow();
+        const cat=document.getElementById('cat');
+        if(cat)cat.value=name;
+        customNotify('Categoria adicionada e enviada para o site do cliente.');
+      }catch(e){
+        console.error(e);
+        window.__robsonCategoryList=window.__robsonCategoryList.filter(c=>c!==name);
+        customNotify('Não foi possível salvar a categoria no Firebase.');
+      }
+    });
+  };
+  window.deleteCategory=async function(){
+    const current=String(document.getElementById('cat')?.value||'').trim().toUpperCase();
+    if(!current)return;
+    if(['HAMBÚRGUERES','HOT DOG','LANCHES ESPECIAIS'].includes(current))return customNotify('As categorias padrão não podem ser excluídas.');
+    if(products.some(p=>String(p.cat||'').trim().toUpperCase()===current))return customNotify('Troque a categoria dos produtos antes de excluir.');
+    customConfirm('EXCLUIR CATEGORIA',`Deseja excluir a categoria <strong>${escapeHtml(current)}</strong>?`,async()=>{
+      window.__robsonCategoryList=(window.__robsonCategoryList||[]).filter(c=>c!==current);
+      try{await window.__saveCategoriesNow();customNotify('Categoria excluída do painel e do site do cliente.');}catch(e){console.error(e);customNotify('Não foi possível salvar a alteração no Firebase.');}
+    });
+  };
+
+  /* Substitui o botão Adicionar por confirmação SIM/NÃO. */
+  window.addProduct=async function(){
+    const name=String(document.getElementById('name').value||'').trim().toUpperCase();
+    const price=Number(document.getElementById('price').value);
+    if(!name||!price)return customNotify('INFORME NOME E PREÇO');
+    if(products.some(p=>String(p.name||'').trim().toUpperCase()===name))return customNotify('JÁ EXISTE UM PRODUTO COM ESSE NOME.');
+    customConfirm('ADICIONAR PRODUTO',`Deseja adicionar o produto <strong>${escapeHtml(name)}</strong>?<br><br><b>SIM ou NÃO?</b>`,async()=>{
+      const cat=document.getElementById('cat').value,desc=document.getElementById('desc').value.trim(),available=document.getElementById('avail').value==='true',f=document.getElementById('photo').files[0];
+      let photo='';
+      try{
+        if(f){ photo=await compress(f); if(photo.length>900000)return customNotify('A foto ficou muito grande. Escolha uma foto menor.'); }
+        const p={id:Date.now(),name,cat,desc,price,available,photo};
+        products.push(p); await saveProduct(p);
+        document.getElementById('name').value='';document.getElementById('price').value='';document.getElementById('desc').value='';document.getElementById('photo').value='';render();
+        customNotify('Produto adicionado. Ele já foi enviado para o site do cliente.');
+      }catch(e){console.error(e);products=products.filter(x=>x.id!==name || x.id===undefined);customNotify('Não foi possível adicionar o produto.');}
+    });
+  };
+
+  /* Garante que a categoria nova apareça também na edição. */
+  const oldRender=window.render;
+  window.render=function(){ if(typeof oldRender==='function')oldRender(); window.renderCategorySelects?.(); };
+
+  waitFirebase(()=>window.firebaseLoadCategories?.());
+})();
+</script>
+<script type="module">
+import {initializeApp, getApps, getApp} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {getFirestore,doc,setDoc,onSnapshot,getDoc} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyDhBQ-QVbOWxfTvt1fTgi4eZG5GMSLdywA",authDomain:"robson-2a391.firebaseapp.com",projectId:"robson-2a391",storageBucket:"robson-2a391.firebasestorage.app",messagingSenderId:"733759215105",appId:"1:733759215105:web:fa04532f433916aeb35200",measurementId:"G-ZLYFBWEVPQ"};
+const app=getApps().length ? getApp() : initializeApp(firebaseConfig),db=getFirestore(app),catRef=doc(db,'config','categorias');
+window.firebaseSaveCategories=async items=>setDoc(catRef,{items,updatedAt:Date.now()},{merge:true});
+window.firebaseLoadCategories=async()=>{
+  const snap=await getDoc(catRef);
+  if(!snap.exists()){
+    const local=JSON.parse(localStorage.getItem('robson_lanches_categories')||'[]');
+    const defaults=['HAMBÚRGUERES','HOT DOG','LANCHES ESPECIAIS'];
+    const items=[...new Set([...defaults,...(Array.isArray(local)?local:[])].map(x=>String(x).trim().toUpperCase()).filter(Boolean))];
+    await setDoc(catRef,{items,updatedAt:Date.now()},{merge:true});
+  }
+};
+onSnapshot(catRef,s=>{
+  const d=s.data()||{},items=Array.isArray(d.items)?d.items.map(x=>String(x).trim().toUpperCase()).filter(Boolean):[];
+  if(items.length){window.__robsonCategoryList=[...new Set(items)];localStorage.setItem('robson_lanches_categories',JSON.stringify(window.__robsonCategoryList));window.renderCategorySelects?.();}
+},console.error);
+</script>
+
+<script>
+/* CORREÇÃO DEFINITIVA - CATEGORIA NO SELECT + CONFIRMAÇÃO DO PRODUTO */
+(function(){
+  function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function catList(){
+    const base=(window.__robsonCategoryList&&Array.isArray(window.__robsonCategoryList))?window.__robsonCategoryList:categories;
+    return [...new Set(base.map(x=>String(x).trim().toUpperCase()).filter(Boolean))];
+  }
+  function fillCategorySelect(sel){
+    if(!sel)return;
+    const current=String(sel.value||'').trim().toUpperCase();
+    const list=catList();
+    sel.innerHTML=list.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('')+
+      `<option value="__ADD_CATEGORY__">＋ ADICIONAR CATEGORIA</option>`;
+    if(list.includes(current)) sel.value=current;
+    else if(current==='__ADD_CATEGORY__') sel.value=list[0]||'';
+    else if(list.length) sel.value=list[0];
+  }
+  function refreshAll(){
+    fillCategorySelect(document.getElementById('cat'));
+    document.querySelectorAll('select[id^="ec-"]').forEach(fillCategorySelect);
+  }
+  window.renderCategorySelects=refreshAll;
+
+  document.addEventListener('change',function(e){
+    const s=e.target;
+    if(!s || !(s.id==='cat'||s.id.startsWith('ec-')))return;
+    if(s.value==='__ADD_CATEGORY__'){
+      const list=catList();
+      s.value=list[0]||'';
+      window.addCategory();
+    }
+  });
+
+  window.addCategory=function(){
+    document.getElementById('customCategoryModal')?.remove();
+    const m=document.createElement('div');m.id='customCategoryModal';m.className='custom-modal';
+    m.innerHTML=`<div class="custom-modal-box"><div class="custom-modal-title">ADICIONAR CATEGORIA</div><div class="custom-modal-text">Digite o nome da nova categoria.</div><input id="newCategoryName" class="modal-input" type="text" placeholder="NOME DA CATEGORIA" autocomplete="off"><div class="custom-modal-actions"><button type="button" class="modal-btn secondary" id="catCancel">NÃO</button><button type="button" class="modal-btn primary" id="catNext">CONTINUAR</button></div></div>`;
+    document.body.appendChild(m);
+    const input=m.querySelector('#newCategoryName'); input.focus();
+    input.oninput=()=>input.value=input.value.toUpperCase();
+    m.querySelector('#catCancel').onclick=()=>m.remove();
+    m.querySelector('#catNext').onclick=()=>{
+      const name=String(input.value||'').trim().replace(/\s+/g,' ').toUpperCase();
+      if(!name){input.focus();return;}
+      const list=catList();
+      if(list.includes(name)){customNotify('ESSA CATEGORIA JÁ EXISTE.');return;}
+      m.remove();
+      customConfirm('ADICIONAR CATEGORIA',`Deseja adicionar a categoria <strong>${esc(name)}</strong>?`,async()=>{
+        const old=catList();
+        const next=[...old,name];
+        window.__robsonCategoryList=next;
+        try{
+          localStorage.setItem('robson_lanches_categories',JSON.stringify(next));
+          if(typeof window.firebaseSaveCategories==='function') await window.firebaseSaveCategories(next);
+          if(Array.isArray(window.categories)) { categories=next.slice(); saveCategories(categories); }
+          refreshAll();
+          const cat=document.getElementById('cat');if(cat)cat.value=name;
+          customNotify('Categoria adicionada.');
+        }catch(err){
+          console.error(err);window.__robsonCategoryList=old;refreshAll();
+          customNotify('Não foi possível salvar a categoria.');
+        }
+      });
+    };
+  };
+
+  window.addProduct=function(){
+    const name=String(document.getElementById('name')?.value||'').trim().replace(/\s+/g,' ').toUpperCase();
+    const price=Number(document.getElementById('price')?.value);
+    if(!name||!price){customNotify('INFORME NOME E PREÇO');return;}
+    if(products.some(p=>String(p.name||'').trim().toUpperCase()===name)){customNotify('JÁ EXISTE UM PRODUTO COM ESSE NOME.');return;}
+    customConfirm('ADICIONAR PRODUTO',`Deseja adicionar o produto <strong>${esc(name)}</strong>?`,async()=>{
+      const cat=String(document.getElementById('cat')?.value||'').trim().toUpperCase();
+      const desc=String(document.getElementById('desc')?.value||'').trim();
+      const available=document.getElementById('avail')?.value==='true';
+      const f=document.getElementById('photo')?.files?.[0];
+      try{
+        let photo=''; if(f) photo=await compress(f);
+        const prod={id:Date.now(),name,cat,desc,price,available,photo};
+        products.push(prod); save();
+        if(typeof saveProduct==='function') await saveProduct(prod);
+        document.getElementById('name').value='';document.getElementById('price').value='';document.getElementById('desc').value='';document.getElementById('photo').value='';
+        render();
+        customNotify('Produto adicionado com sucesso.');
+      }catch(err){
+        console.error(err);products=products.filter(x=>x.id!==prod?.id);save();render();
+        customNotify('Não foi possível adicionar o produto.');
+      }
+    });
+  };
+
+  /* Remove os botões antigos e deixa a opção dentro do próprio dropdown. */
+  function removeOldCategoryButtons(){document.querySelectorAll('.category-actions').forEach(x=>x.remove());}
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>{removeOldCategoryButtons();refreshAll();});
+  else {removeOldCategoryButtons();refreshAll();}
+  const oldRenderFinal=window.render;
+  window.render=function(){if(typeof oldRenderFinal==='function')oldRenderFinal();removeOldCategoryButtons();refreshAll();};
+})();
+</script>
+
+<script>
+(function(){
+  function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;',"\\":'&quot;','"':'&quot;'}[c]||c));}
+  window.renderCategoryManager=function(){
+    const box=document.getElementById('categoryManager'); if(!box)return;
+    const list=window.__robsonCategoryList||['HAMBÚRGUERES','HOT DOG','LANCHES ESPECIAIS'];
+    box.innerHTML='<button type="button" class="category-add-main" id="addCategoryMain">＋ ADICIONAR CATEGORIA</button>'+list.map(c=>`<div class="category-row"><span>${esc(c)}</span><button type="button" class="category-delete" data-cat="${esc(c)}">EXCLUIR</button></div>`).join('');
+    box.querySelector('#addCategoryMain').onclick=()=>window.openAddCategoryModal();
+    box.querySelectorAll('.category-delete').forEach(b=>b.onclick=()=>window.askDeleteCategory(b.dataset.cat));
+  };
+  window.openAddCategoryModal=function(){
+    const m=categoryModal('ADICIONAR CATEGORIA','Digite o nome da nova categoria.',`<input id="newCategoryName" class="modal-input" type="text" placeholder="NOME DA CATEGORIA" autocomplete="off"><div class="custom-modal-actions"><button class="modal-btn secondary" id="cancelCat">NÃO</button><button class="modal-btn primary" id="nextCat">CONTINUAR</button></div>`);
+    m.querySelector('#cancelCat').onclick=()=>m.remove();
+    m.querySelector('#nextCat').onclick=()=>window.confirmAddCategoryNew();
+    const i=m.querySelector('#newCategoryName'); i.oninput=()=>i.value=i.value.toUpperCase(); setTimeout(()=>i.focus(),30);
+  };
+  window.confirmAddCategoryNew=function(){
+    const i=document.getElementById('newCategoryName'),name=normName(i?.value); if(!name)return i?.focus();
+    if((window.__robsonCategoryList||[]).some(c=>normName(c)===name))return customNotify('ESSA CATEGORIA JÁ EXISTE.');
+    document.getElementById('customCategoryModal')?.remove();
+    customConfirm('ADICIONAR CATEGORIA',`Deseja adicionar a categoria <strong>${escapeHtml(name)}</strong>?`,async()=>{
+      window.__robsonCategoryList=[...(window.__robsonCategoryList||[]),name];
+      try{await window.__saveCategoriesNow();renderCategoryManager();document.getElementById('cat').value=name;customNotify('Categoria adicionada.');}
+      catch(e){console.error(e);window.__robsonCategoryList=window.__robsonCategoryList.filter(x=>x!==name);renderCategoryManager();customNotify('Não foi possível salvar a categoria.');}
+    });
+  };
+  window.askDeleteCategory=function(name){
+    name=normName(name);
+    if(['HAMBÚRGUERES','HOT DOG','LANCHES ESPECIAIS'].includes(name))return customNotify('As categorias padrão não podem ser excluídas.');
+    if((window.products||[]).some(p=>normName(p.cat)===name))return customNotify('Esta categoria está sendo usada por um produto. Troque a categoria do produto antes de excluir.');
+    customConfirm('EXCLUIR CATEGORIA',`Deseja excluir a categoria <strong>${escapeHtml(name)}</strong>?`,async()=>{
+      const old=window.__robsonCategoryList||[]; window.__robsonCategoryList=old.filter(c=>normName(c)!==name);
+      try{await window.__saveCategoriesNow();renderCategoryManager();customNotify('Categoria excluída.');}catch(e){console.error(e);window.__robsonCategoryList=old;renderCategoryManager();customNotify('Não foi possível excluir a categoria.');}
+    });
+  };
+  const oldRenderCat=window.renderCategorySelects;
+  window.renderCategorySelects=function(){if(oldRenderCat)oldRenderCat();renderCategoryManager();};
+  window.addEventListener('load',()=>setTimeout(renderCategoryManager,100));
+})();
+</script>
+<script>
+/* CONFIRMAÇÃO REAL ANTES DE CRIAR PRODUTO */
+(function(){
+ const wait=()=>{if(typeof customConfirm!=='function'||typeof saveProduct!=='function'){setTimeout(wait,100);return;}
+ window.addProduct=async function(){
+   const name=String(document.getElementById('name')?.value||'').trim().toUpperCase(), price=Number(document.getElementById('price')?.value||0);
+   if(!name||!price)return customNotify('INFORME NOME E PREÇO');
+   if((window.products||[]).some(p=>normName(p.name)===name))return customNotify('JÁ EXISTE UM PRODUTO COM ESSE NOME.');
+   customConfirm('ADICIONAR PRODUTO',`Deseja adicionar o produto <strong>${escapeHtml(name)}</strong>?`,async()=>{
+     try{
+       const cat=document.getElementById('cat').value,desc=document.getElementById('desc').value.trim(),available=document.getElementById('avail').value==='true',f=document.getElementById('photo').files[0];
+       let photo=''; if(f){photo=await compress(f);if(photo.length>900000)return customNotify('A foto ficou muito grande. Escolha uma foto menor.');}
+       const p={id:Date.now(),name,cat,desc,price,available,photo};
+       window.products.push(p); await saveProduct(p); save(); render();
+       document.getElementById('name').value='';document.getElementById('price').value='';document.getElementById('desc').value='';document.getElementById('photo').value='';
+       customNotify('Produto adicionado com sucesso.');
+     }catch(e){console.error(e);customNotify('Não foi possível adicionar o produto.');}
+   });
+ };
+ }; wait();
+})();
+</script>
+<style>
+.category-manager{margin-top:8px;border:1px solid #333;border-radius:12px;overflow:hidden;background:#0b0b0b}
+.category-add-main{width:100%;border:0;border-bottom:1px solid #333;background:#e10600;color:#fff;padding:12px;text-align:left;font-weight:900;cursor:pointer}
+.category-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border-bottom:1px solid #242424;color:#fff;font-weight:800;font-size:13px}
+.category-row:last-child{border-bottom:0}.category-delete{border:0;border-radius:8px;padding:7px 10px;background:#292929;color:#ff6b63;font-weight:900;cursor:pointer}.category-delete:hover{background:#491b19}
+</style>
+
+
+<script>
+/* ===== CORREÇÃO DEFINITIVA DAS FOTOS =====
+   Fotos novas vão para Firebase Storage e o Firestore guarda somente a URL.
+   Isso evita que a imagem suma por causa do limite/tamanho do documento.
+*/
+(function(){
+  async function uploadPhoto(id,file){
+    if(!file) return '';
+    if(typeof window.uploadProductPhoto!=='function') throw new Error('Firebase Storage ainda não carregou.');
+    return await window.uploadProductPhoto(String(id),file);
+  }
+
+  window.photo=async function(id){
+    const input=document.createElement('input');
+    input.type='file'; input.accept='image/*';
+    input.onchange=async function(e){
+      const f=e.target.files?.[0]; if(!f)return;
+      const p=(window.products||[]).find(x=>String(x.id)===String(id));
+      if(!p)return;
+      try{
+        customNotify('ENVIANDO FOTO...');
+        const url=await uploadPhoto(p.id,f);
+        p.photo=url;
+        if(typeof window.saveProductFirebase==='function') await window.saveProductFirebase(p);
+        else if(typeof window.firebaseSaveProduct==='function') await window.firebaseSaveProduct(p);
+        localStorage.setItem('robson_lanches_products',JSON.stringify(window.products||[]));
+        render();
+        customNotify('Foto salva no Firebase e enviada para o site do cliente.');
+      }catch(err){
+        console.error('Erro ao enviar foto:',err);
+        customNotify('Não foi possível enviar a foto. Verifique o Firebase Storage.');
+      }
+    };
+    input.click();
+  };
+
+  window.addProduct=async function(){
+    const name=String(document.getElementById('name')?.value||'').trim().replace(/\s+/g,' ').toUpperCase();
+    const price=Number(document.getElementById('price')?.value||0);
+    if(!name||!price)return customNotify('INFORME NOME E PREÇO');
+    if((window.products||[]).some(p=>String(p.name||'').trim().replace(/\s+/g,' ').toUpperCase()===name))
+      return customNotify('JÁ EXISTE UM PRODUTO COM ESSE NOME.');
+
+    customConfirm('ADICIONAR NOVO PRODUTO',`Deseja adicionar o produto <strong>${escapeHtml(name)}</strong>?`,async()=>{
+      let p=null;
+      try{
+        const cat=String(document.getElementById('cat')?.value||'').trim().toUpperCase();
+        const desc=String(document.getElementById('desc')?.value||'').trim();
+        const available=document.getElementById('avail')?.value==='true';
+        const f=document.getElementById('photo')?.files?.[0]||null;
+        p={id:Date.now(),name,cat,desc,price,available,photo:''};
+
+        /* PRIMEIRO sobe a foto para o Storage. */
+        if(f){
+          customNotify('ENVIANDO FOTO...');
+          p.photo=await uploadPhoto(p.id,f);
+        }
+
+        window.products=Array.isArray(window.products)?window.products:[];
+        window.products.push(p);
+        if(typeof window.saveProductFirebase==='function') await window.saveProductFirebase(p);
+        else if(typeof window.firebaseSaveProduct==='function') await window.firebaseSaveProduct(p);
+        else throw new Error('Firebase Firestore não carregou.');
+
+        localStorage.setItem('robson_lanches_products',JSON.stringify(window.products));
+        document.getElementById('name').value='';
+        document.getElementById('price').value='';
+        document.getElementById('desc').value='';
+        document.getElementById('photo').value='';
+        render();
+        customNotify('Produto adicionado. A foto foi salva e enviada para o site do cliente.');
+      }catch(err){
+        console.error('Erro ao adicionar produto/foto:',err);
+        if(p) window.products=(window.products||[]).filter(x=>String(x.id)!==String(p.id));
+        localStorage.setItem('robson_lanches_products',JSON.stringify(window.products||[]));
+        render();
+        customNotify('Não foi possível adicionar o produto.');
+      }
+    });
+  };
+
+  window.saveEdit=async function(id){
+    const p=(window.products||[]).find(x=>String(x.id)===String(id)); if(!p)return;
+    try{
+      p.name=String(document.getElementById('en-'+id)?.value||'').trim().toUpperCase();
+      p.price=Number(document.getElementById('ep-'+id)?.value||0)||0;
+      p.cat=document.getElementById('ec-'+id)?.value||p.cat;
+      p.desc=String(document.getElementById('ed-'+id)?.value||'').trim();
+      if(typeof window.saveProductFirebase==='function') await window.saveProductFirebase(p);
+      else if(typeof window.firebaseSaveProduct==='function') await window.firebaseSaveProduct(p);
+      localStorage.setItem('robson_lanches_products',JSON.stringify(window.products||[]));
+      render();
+      customNotify('Alteração salva.');
+    }catch(err){console.error(err);customNotify('Não foi possível salvar a alteração.');}
+  };
+})();
+</script>
+
+
+<!-- robson_lanches_photo_refresh_fix_v2 -->
+<script>
+(function(){
+  const KEY='robson_lanches_photo_cache';
+  function cache(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){return {}}}
+  function preserve(list){
+    const c=cache();
+    const old=Array.isArray(window.products)?window.products:[];
+    const om=new Map(old.map(p=>[String(p.id),p]));
+    return (list||[]).map(p=>{
+      const q={...p}; const id=String(q.id);
+      if(!q.photo) q.photo=c[id]||om.get(id)?.photo||'';
+      if(q.photo) c[id]=q.photo;
+      return q;
+    });
+  }
+  window.__robsonPreservePhotos=preserve;
+  window.__robsonRememberPhoto=function(id,photo){
+    if(!photo)return; const c=cache(); c[String(id)]=photo;
+    try{localStorage.setItem(KEY,JSON.stringify(c))}catch(e){}
+  };
+})();
+</script>
+</body></html>
+<style>
+.custom-modal{
+  position:fixed; inset:0; z-index:99999; display:flex; align-items:center; justify-content:center;
+  padding:20px; background:rgba(0,0,0,.78); backdrop-filter:blur(5px);
+}
+.custom-modal-box{
+  width:min(430px,100%); background:#151515; border:1px solid #3a3a3a; border-radius:18px;
+  padding:22px; box-shadow:0 20px 70px rgba(0,0,0,.55); color:#fff;
+}
+.custom-modal-title{font-size:20px;font-weight:800;margin-bottom:7px}
+.custom-modal-text{font-size:14px;color:#aaa;margin-bottom:18px}
+.modal-input{
+  width:100%; box-sizing:border-box; margin:0 0 12px; padding:13px 14px; border-radius:10px;
+  border:1px solid #3b3b3b; background:#0d0d0d; color:#fff; outline:none; font-size:15px;
+}
+.modal-input:focus{border-color:#e53935}
+.custom-modal-actions{display:flex;gap:10px;margin-top:6px}
+.modal-btn{flex:1;border:0;border-radius:10px;padding:12px;font-weight:800;cursor:pointer}
+.modal-btn.secondary{background:#292929;color:#fff}
+.modal-btn.primary{background:#e53935;color:#fff}
+</style>
+<script>
+function confirmAddNeighborhood(){
+  const nameEl = document.getElementById('newRateName');
+  const feeEl = document.getElementById('newRateFee');
+  const name = (nameEl?.value || '').trim();
+  const fee = parseFloat(feeEl?.value || '0');
+
+  if(!name){
+    nameEl?.focus();
+    return;
+  }
+  if(isNaN(fee) || fee < 0){
+    feeEl?.focus();
+    return;
+  }
+
+  neighborhoods.push({name:name, fee:fee, available:true});
+  renderNeighborhoods();
+  autoSaveNeighborhoods();
+  document.getElementById('newRateModal')?.remove();
+}
+</script>
+
+
+<script>
+/* ===== CORREÇÃO DEFINITIVA DO DROPDOWN DE CATEGORIAS + CONFIRMAÇÃO DO PRODUTO ===== */
+(function(){
+  const DEFAULTS=['HAMBÚRGUERES','HOT DOG','LANCHES ESPECIAIS'];
+  const norm=v=>String(v??'').trim().replace(/\s+/g,' ').toUpperCase();
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const getList=()=>{
+    const a=Array.isArray(window.__robsonCategoryList)?window.__robsonCategoryList:[];
+    const out=[]; a.forEach(x=>{x=norm(x);if(x&&!out.includes(x))out.push(x)});
+    return out.length?out:DEFAULTS.slice();
+  };
+  let open=false;
+
+  function ensureUI(){
+    const sel=document.getElementById('cat');
+    if(!sel)return;
+    let btn=document.getElementById('categoryDropdownBtn');
+    let menu=document.getElementById('categoryDropdownMenu');
+    if(!btn){
+      btn=document.createElement('button');
+      btn.type='button'; btn.id='categoryDropdownBtn'; btn.className='category-dropdown-btn';
+      btn.innerHTML='<span id="categoryDropdownLabel">HAMBÚRGUERES</span><span class="category-arrow">⌄</span>';
+      sel.style.display='none';
+      sel.parentNode.insertBefore(btn,sel);
+      btn.onclick=e=>{e.stopPropagation();toggleMenu();};
+    }
+    if(!menu){
+      menu=document.createElement('div'); menu.id='categoryDropdownMenu'; menu.className='category-dropdown-menu';
+      sel.parentNode.insertBefore(menu,sel.nextSibling);
+    }
+    renderMenu();
+    syncLabel();
+  }
+
+  function syncLabel(){
+    const sel=document.getElementById('cat'), label=document.getElementById('categoryDropdownLabel');
+    if(!sel||!label)return;
+    label.textContent=sel.value||getList()[0]||'HAMBÚRGUERES';
+  }
+
+  function renderMenu(){
+    const menu=document.getElementById('categoryDropdownMenu'); if(!menu)return;
+    const list=getList();
+    menu.innerHTML='<button type="button" class="category-add-option" id="categoryAddOption">＋ ADICIONAR CATEGORIA</button>'+
+      list.map(c=>'<div class="category-option"><button type="button" class="category-name-option" data-cat="'+esc(c)+'">'+esc(c)+'</button><button type="button" class="category-delete-option" data-del="'+esc(c)+'">EXCLUIR</button></div>').join('');
+    menu.querySelector('#categoryAddOption').onclick=e=>{e.stopPropagation();closeMenu();openAddCategory();};
+    menu.querySelectorAll('[data-cat]').forEach(b=>b.onclick=e=>{e.stopPropagation();selectCategory(b.dataset.cat);});
+    menu.querySelectorAll('[data-del]').forEach(b=>b.onclick=e=>{e.stopPropagation();askDelete(b.dataset.del);});
+  }
+
+  function toggleMenu(){
+    const menu=document.getElementById('categoryDropdownMenu'); if(!menu)return;
+    open=!open; menu.classList.toggle('open',open);
+  }
+  function closeMenu(){open=false;document.getElementById('categoryDropdownMenu')?.classList.remove('open');}
+  function selectCategory(c){
+    const sel=document.getElementById('cat'); if(!sel)return;
+    sel.value=norm(c); syncLabel(); closeMenu();
+  }
+
+  function openAddCategory(){
+    document.getElementById('customCategoryModal')?.remove();
+    const m=document.createElement('div');m.id='customCategoryModal';m.className='custom-modal';
+    m.innerHTML='<div class="custom-modal-box"><div class="custom-modal-title">ADICIONAR CATEGORIA</div><div class="custom-modal-text">Digite o nome da nova categoria.</div><input id="newCategoryName" class="modal-input" type="text" placeholder="NOME DA CATEGORIA" autocomplete="off"><div class="custom-modal-actions"><button type="button" class="modal-btn secondary" id="catNo">NÃO</button><button type="button" class="modal-btn primary" id="catNext">CONTINUAR</button></div></div>';
+    document.body.appendChild(m);
+    m.querySelector('#catNo').onclick=()=>m.remove();
+    const input=m.querySelector('#newCategoryName');
+    input.oninput=()=>input.value=input.value.toUpperCase();
+    m.querySelector('#catNext').onclick=()=>{
+      const name=norm(input.value); if(!name)return input.focus();
+      if(getList().includes(name))return customNotify('ESSA CATEGORIA JÁ EXISTE.');
+      m.remove();
+      customConfirm('ADICIONAR CATEGORIA',`Deseja adicionar a categoria <strong>${esc(name)}</strong>?`,async()=>{
+        const old=getList();
+        window.__robsonCategoryList=[...old,name];
+        try{
+          if(typeof window.__saveCategoriesNow==='function') await window.__saveCategoriesNow();
+          else { localStorage.setItem('robson_lanches_categories',JSON.stringify(window.__robsonCategoryList)); if(typeof window.firebaseSaveCategories==='function') await window.firebaseSaveCategories(window.__robsonCategoryList); }
+          const sel=document.getElementById('cat'); if(sel)sel.value=name;
+          ensureUI(); syncLabel(); customNotify('Categoria adicionada.');
+        }catch(e){
+          console.error(e);window.__robsonCategoryList=old;ensureUI();customNotify('Não foi possível salvar a categoria.');
+        }
+      });
+    };
+    setTimeout(()=>input.focus(),30);
+  }
+
+  function askDelete(name){
+    name=norm(name);
+    customConfirm('EXCLUIR CATEGORIA',`Deseja excluir a categoria <strong>${esc(name)}</strong>?`,async()=>{
+      const old=getList();
+      const next=old.filter(c=>norm(c)!==name);
+      if(!next.length)return customNotify('É necessário manter pelo menos uma categoria.');
+      window.__robsonCategoryList=next;
+      try{
+        if(typeof window.__saveCategoriesNow==='function') await window.__saveCategoriesNow();
+        else {localStorage.setItem('robson_lanches_categories',JSON.stringify(next));if(typeof window.firebaseSaveCategories==='function')await window.firebaseSaveCategories(next);}
+        const sel=document.getElementById('cat');
+        if(sel && norm(sel.value)===name)sel.value=next[0];
+        ensureUI();syncLabel();
+        customNotify('Categoria excluída.');
+      }catch(e){
+        console.error(e);window.__robsonCategoryList=old;ensureUI();customNotify('Não foi possível excluir a categoria.');
+      }
+    });
+  }
+
+  /* Bloqueia qualquer tentativa antiga de adicionar direto e sempre abre SIM/NÃO. */
+  window.addProduct=async function(){
+    const name=norm(document.getElementById('name')?.value), price=Number(document.getElementById('price')?.value||0);
+    if(!name||!price)return customNotify('INFORME NOME E PREÇO');
+    if((window.products||[]).some(p=>norm(p.name)===name))return customNotify('JÁ EXISTE UM PRODUTO COM ESSE NOME.');
+    customConfirm('ADICIONAR NOVO PRODUTO',`Deseja adicionar o produto <strong>${esc(name)}</strong>?`,async()=>{
+      const cat=norm(document.getElementById('cat')?.value||getList()[0]);
+      const desc=String(document.getElementById('desc')?.value||'').trim();
+      const available=document.getElementById('avail')?.value==='true';
+      const f=document.getElementById('photo')?.files?.[0];
+      try{
+        let photo='';
+        if(f && typeof compress==='function'){photo=await compress(f);if(photo.length>900000)return customNotify('A foto ficou muito grande. Escolha uma foto menor.');}
+        const p={id:Date.now(),name,cat,desc,price,available,photo};
+        window.products=Array.isArray(window.products)?window.products:[];
+        window.products.push(p);
+        if(typeof window.saveProductFirebase==='function') await window.saveProductFirebase(p);
+        else if(typeof window.firebaseSaveProduct==='function') await window.firebaseSaveProduct(p);
+        localStorage.setItem('robson_lanches_products',JSON.stringify(window.products));
+        document.getElementById('name').value='';document.getElementById('price').value='';document.getElementById('desc').value='';document.getElementById('photo').value='';
+        if(typeof render==='function')render();
+        customNotify('Produto adicionado com sucesso.');
+      }catch(e){
+        console.error(e);window.products=window.products.filter(x=>x.id!==p?.id);localStorage.setItem('robson_lanches_products',JSON.stringify(window.products));
+        customNotify('Não foi possível adicionar o produto.');
+      }
+    });
+  };
+
+  function init(){
+    ensureUI();
+    const sel=document.getElementById('cat');
+    if(sel){sel.addEventListener('change',syncLabel);}
+    document.addEventListener('click',e=>{if(open && !e.target.closest('#categoryDropdownBtn,#categoryDropdownMenu'))closeMenu();});
+    setTimeout(ensureUI,150);setTimeout(ensureUI,700);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+  window.addEventListener('load',()=>setTimeout(ensureUI,100));
+})();
+</script>
+<style>
+/* Dropdown igual ao solicitado: seta fecha/abre; ADICIONAR é sempre a primeira opção. */
+.category-dropdown-btn{width:100%;display:flex;align-items:center;justify-content:space-between;box-sizing:border-box;border:1px solid #333;border-radius:14px;background:#090909;color:#fff;padding:14px 16px;font-size:16px;font-weight:800;text-align:left;cursor:pointer}
+.category-arrow{font-size:22px;line-height:1;opacity:.9}
+.category-dropdown-menu{display:none;margin-top:6px;border:1px solid #333;border-radius:12px;overflow:hidden;background:#0b0b0b}
+.category-dropdown-menu.open{display:block}
+.category-add-option{display:block;width:100%;border:0;border-bottom:1px solid #333;background:#e10600;color:#fff;padding:13px 14px;text-align:left;font-weight:900;font-size:15px;cursor:pointer}
+.category-option{display:flex;align-items:center;border-bottom:1px solid #242424;min-height:50px}
+.category-option:last-child{border-bottom:0}
+.category-name-option{flex:1;border:0;background:transparent;color:#fff;padding:13px 14px;text-align:left;font-weight:800;font-size:14px;cursor:pointer}
+.category-delete-option{margin-right:10px;border:0;border-radius:9px;background:#292929;color:#ff716a;padding:8px 11px;font-weight:900;cursor:pointer}
+.category-delete-option:active,.category-name-option:active,.category-add-option:active{opacity:.75}
+</style>
+
+<script>
+/* ===== PATCH FINAL DE FOTO - SEM FIREBASE STORAGE =====
+   A foto fica dentro do documento do produto no Firestore.
+   Nunca usa Storage e nunca deixa um snapshot sem foto apagar uma foto já salva.
+*/
+(function(){
+  const MAX_DATA_URL = 650000;
+  const photoCacheKey='robson_lanches_photo_cache';
+  function getCache(){try{return JSON.parse(localStorage.getItem(photoCacheKey)||'{}')||{}}catch(e){return {}}}
+  function setCache(c){try{localStorage.setItem(photoCacheKey,JSON.stringify(c))}catch(e){}}
+  function remember(id,photo){if(!photo)return;const c=getCache();c[String(id)]=photo;setCache(c)}
+  function cached(id){return getCache()[String(id)]||''}
+  async function db(){
+    if(window.firebaseDB)return window.firebaseDB;
+    const {initializeApp,getApps,getApp}=await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js');
+    const {getFirestore}=await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js');
+    const cfg={apiKey:'AIzaSyDhBQ-QVbOWxfTvt1fTgi4eZG5GMSLdywA',authDomain:'robson-2a391.firebaseapp.com',projectId:'robson-2a391',storageBucket:'robson-2a391.firebasestorage.app',messagingSenderId:'733759215105',appId:'1:733759215105:web:fa04532f433916aeb35200',measurementId:'G-ZLYFBWEVPQ'};
+    const app=getApps().length?getApp():initializeApp(cfg);window.firebaseDB=getFirestore(app);return window.firebaseDB;
+  }
+  function compress(file){return new Promise((resolve,reject)=>{
+    const r=new FileReader();r.onerror=reject;r.onload=()=>{
+      const im=new Image();im.onerror=reject;im.onload=()=>{
+        let w=1000,h=Math.round(im.height*(w/im.width));
+        if(im.width<w){w=im.width;h=im.height}
+        let q=.70;
+        const c=document.createElement('canvas'),ctx=c.getContext('2d');
+        const attempt=()=>{c.width=w;c.height=h;ctx.clearRect(0,0,w,h);ctx.drawImage(im,0,0,w,h);const out=c.toDataURL('image/jpeg',q);if(out.length<=MAX_DATA_URL)return resolve(out);if(q>.42){q-=.06;attempt();return}w=Math.round(w*.82);h=Math.round(im.height*(w/im.width));q=.62;if(w<320)return reject(new Error('FOTO_GRANDE'));attempt()};
+        attempt();
+      };im.src=r.result;
+    };r.readAsDataURL(file);
+  })}
+  async function savePhotoProduct(p){
+    const firestore=await db();const {doc,setDoc}=await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js');
+    if(!p.photo||p.photo.length>MAX_DATA_URL)throw new Error('FOTO_GRANDE');
+    await setDoc(doc(firestore,'produtos',String(p.id)),{id:p.id,name:p.name,cat:p.cat||'',desc:p.desc||'',price:Number(p.price)||0,available:p.available!==false,photo:p.photo},{merge:true});
+    remember(p.id,p.photo);return true;
+  }
+  function mergeSnapshot(list){
+    const cache=getCache();const old=Array.isArray(window.products)?window.products:[];const oldMap=new Map(old.map(p=>[String(p.id),p]));
+    return list.map(p=>{const id=String(p.id);let photo=p.photo||cache[id]||oldMap.get(id)?.photo||'';if(photo)remember(id,photo);return {...p,photo}});
+  }
+  window.photo=async function(id){
+    const p=(window.products||[]).find(x=>String(x.id)===String(id));if(!p)return;
+    const input=document.createElement('input');input.type='file';input.accept='image/*';input.onchange=async()=>{const f=input.files?.[0];if(!f)return;try{customNotify('SALVANDO FOTO...');p.photo=await compress(f);await savePhotoProduct(p);localStorage.setItem('robson_lanches_products',JSON.stringify(window.products));render();customNotify('FOTO SALVA. ELA FICA NO FIRESTORE.')}catch(e){console.error(e);customNotify(e.message==='FOTO_GRANDE'?'ESCOLHA UMA FOTO MENOR.':'NÃO FOI POSSÍVEL SALVAR A FOTO.')}};input.click();
+  };
+  window.addProduct=async function(){
+    const name=String(document.getElementById('name')?.value||'').trim().replace(/\s+/g,' ').toUpperCase(),price=Number(document.getElementById('price')?.value||0);
+    if(!name||!price)return customNotify('INFORME NOME E PREÇO');
+    if((window.products||[]).some(p=>String(p.name||'').trim().replace(/\s+/g,' ').toUpperCase()===name))return customNotify('JÁ EXISTE UM PRODUTO COM ESSE NOME.');
+    customConfirm('ADICIONAR NOVO PRODUTO',`Deseja adicionar o produto <strong>${escapeHtml(name)}</strong>?`,async()=>{
+      const p={id:Date.now(),name,cat:String(document.getElementById('cat')?.value||'').trim().toUpperCase(),desc:String(document.getElementById('desc')?.value||'').trim(),price,available:document.getElementById('avail')?.value==='true',photo:''};
+      try{const f=document.getElementById('photo')?.files?.[0];if(f){customNotify('SALVANDO FOTO...');p.photo=await compress(f)}await savePhotoProduct(p);window.products=[...(window.products||[]),p];localStorage.setItem('robson_lanches_products',JSON.stringify(window.products));document.getElementById('name').value='';document.getElementById('price').value='';document.getElementById('desc').value='';document.getElementById('photo').value='';render();customNotify(p.photo?'PRODUTO E FOTO SALVOS.':'PRODUTO SALVO.')}catch(e){console.error(e);customNotify(e.message==='FOTO_GRANDE'?'A FOTO É MUITO GRANDE. ESCOLHA OUTRA.':'NÃO FOI POSSÍVEL SALVAR O PRODUTO.')}});
+  };
+  (async()=>{try{const firestore=await db();const {collection,onSnapshot}=await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js');onSnapshot(collection(firestore,'produtos'),snap=>{const raw=[];snap.forEach(d=>raw.push({...d.data(),id:d.data().id??d.id}));raw.sort((a,b)=>Number(a.id)-Number(b.id));const merged=mergeSnapshot(raw);window.products=merged;try{products=merged}catch(e){}localStorage.setItem('robson_lanches_products',JSON.stringify(merged));if(typeof render==='function')render()},e=>console.error('Firestore produtos:',e))}catch(e){console.error(e)}})();
+})();
+</script>
+\n<script type="module">\n/* ===== FOTO ADM: SALVA DIRETO NO FIRESTORE, SEM STORAGE ===== */\nimport { getApps, getApp, initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";\nimport { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";\nconst C={apiKey:"AIzaSyDhBQ-QVbOWxfTvt1fTgi4eZG5GMSLdywA",authDomain:"robson-2a391.firebaseapp.com",projectId:"robson-2a391",storageBucket:"robson-2a391.firebasestorage.app",messagingSenderId:"733759215105",appId:"1:733759215105:web:fa04532f433916aeb35200",measurementId:"G-ZLYFBWEVPQ"};\nconst A=getApps().length?getApp():initializeApp(C), DB=getFirestore(A);\nconst PC="robson_lanches_photo_cache";\nfunction gc(){try{return JSON.parse(localStorage.getItem(PC)||"{}")||{}}catch(e){return {}}}\nfunction sc(c){try{localStorage.setItem(PC,JSON.stringify(c))}catch(e){}}\nfunction compressFinal(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{let q=.72,w=800;const go=()=>{const k=Math.min(1,w/im.width),c=document.createElement("canvas");c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));c.getContext("2d").drawImage(im,0,0,c.width,c.height);const out=c.toDataURL("image/jpeg",q);if(out.length>600000&&q>.35){q-=.08;return go()}if(out.length>600000&&w>500){w-=100;q=.72;return go()}res(out)};go()};im.onerror=rej;im.src=r.result};r.onerror=rej;r.readAsDataURL(file)})}\nwindow.__robsonSavePhotoForever=async function(id,file){\n const p=(window.products||[]).find(x=>String(x.id)===String(id));if(!p||!file)throw Error("PRODUTO_NAO_ENCONTRADO");\n const photo=await compressFinal(file);\n if(photo.length>700000)throw Error("FOTO_GRANDE");\n p.photo=photo;const c=gc();c[String(id)]=photo;sc(c);\n await setDoc(doc(DB,"produtos",String(id)),{photo,id:p.id,name:p.name,cat:p.cat||"",desc:p.desc||"",price:Number(p.price)||0,available:p.available!==false},{merge:true});\n localStorage.setItem("robson_lanches_products",JSON.stringify(window.products||[]));\n if(typeof render==="function")render();\n};\n</script>\n
